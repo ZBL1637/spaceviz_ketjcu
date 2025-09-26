@@ -1,14 +1,9 @@
 import Papa from 'papaparse';
 
-/**
- * 异步加载位于 public 目录下的 Space_Processed.csv 数据文件。
- * 使用 import.meta.env.BASE_URL 以兼容 GitHub Pages 路径前缀（如 /spaceviz_ketjcu/）。
- * @returns {Promise<Array<Object>>} 解析后的数据数组（失败时返回空数组）。
- */
 export const loadSpaceData = async () => {
   try {
-    // 生产环境（GitHub Pages）下需要带上 base 前缀，开发环境由 Vite 自动处理
-    const response = await fetch(`${import.meta.env.BASE_URL}Space_Processed.csv`);
+    // 使用public目录下的文件路径
+    const response = await fetch('/Space_Processed.csv');
     const csvText = await response.text();
     
     const result = Papa.parse(csvText, {
@@ -34,11 +29,6 @@ export const loadSpaceData = async () => {
   }
 };
 
-/**
- * 将原始数据按图表需要的结构进行聚合与排序。
- * @param {Array<Object>} data 原始任务数据
- * @returns {{yearlyData:Array, companyData:Array, locationData:Array}} 聚合后的图表数据
- */
 export const processDataForCharts = (data) => {
   // 按年份统计发射次数
   const launchesByYear = data.reduce((acc, mission) => {
@@ -92,13 +82,6 @@ export const processDataForCharts = (data) => {
   };
 };
 
-/**
- * 过滤获取指定年份区间内的时间线数据。
- * @param {Array<Object>} data 原始任务数据
- * @param {number} startYear 起始年份（含）
- * @param {number} endYear 结束年份（含）
- * @returns {Array<Object>} 过滤后的时间线数据
- */
 export const getTimelineData = (data, startYear, endYear) => {
   return data.filter(mission => {
     const year = mission.Year;
@@ -106,11 +89,6 @@ export const getTimelineData = (data, startYear, endYear) => {
   });
 };
 
-/**
- * 生成太空竞赛对比数据，计算关键机构各年的任务次数。
- * @param {Array<Object>} data 原始任务数据
- * @returns {Array<Object>} 按年份排序的对比数据
- */
 export const getSpaceRaceData = (data) => {
   const spaceRaceCountries = ['RVSN USSR', 'NASA', 'SpaceX', 'CASC', 'Roscosmos'];
   

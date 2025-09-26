@@ -2,8 +2,8 @@ import Papa from 'papaparse';
 
 export const loadSpaceData = async () => {
   try {
-    // 使用public目录下的文件路径
-    const response = await fetch('/Space_Processed.csv');
+    // 使用public目录下的文件路径，考虑base路径
+    const response = await fetch('/spaceviz_ketjcu/Space_Processed.csv');
     const csvText = await response.text();
     
     const result = Papa.parse(csvText, {

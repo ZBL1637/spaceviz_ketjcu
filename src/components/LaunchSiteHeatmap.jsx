@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 // 移除未使用的 Badge 导入
 // import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import AnimatedNumber from './AnimatedNumber';
 
 const LaunchSiteHeatmap = ({ data }) => {
   const [selectedSite, setSelectedSite] = useState(null);
@@ -36,29 +37,28 @@ const LaunchSiteHeatmap = ({ data }) => {
   };
 
   /**
-   * 线性插值（用于 RGB 分量插值）
-   * @param {number} a 起始值
-   * @param {number} b 终止值
-   * @param {number} t 插值比例 0-1
-   * @returns {number}
+   * 线性插值函数
+   * @param {number} a - 起始值
+   * @param {number} b - 结束值
+   * @param {number} t - 插值参数（0-1之间）
+   * @returns {number} 插值结果
    */
   const lerp = (a, b, t) => a + (b - a) * t;
-
+  
   /**
-   * 平滑插值函数（smoothstep），让颜色过渡更顺滑
-   * 公式：t*t*(3-2*t)，并对输入进行0-1归一化
-   * @param {number} edge0 左边界（0-1）
-   * @param {number} edge1 右边界（0-1）
-   * @param {number} x 当前值（0-1）
-   * @returns {number} 平滑后的插值因子（0-1）
+   * 平滑阶跃函数
+   * @param {number} edge0 - 下边界
+   * @param {number} edge1 - 上边界
+   * @param {number} x - 输入值
+   * @returns {number} 平滑阶跃结果
    */
   const smoothstep = (edge0, edge1, x) => {
     const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
     return t * t * (3 - 2 * t);
   };
-
+  
   /**
-   * 将成功率映射为连续颜色：清华紫渐变（浅紫 -> 清华紫 -> 深紫）
+   * 将成功率映射为连续颜色
    * 设计原则：
    * - 提高阈值（GRADIENT_PIVOT=0.65）以在中高区间获得更好的对比度
    * - 使用 smoothstep 增强过渡平滑度，避免生硬的线性分界
@@ -68,22 +68,22 @@ const LaunchSiteHeatmap = ({ data }) => {
   const interpolateColor = (rate) => {
     const clamp = (x) => Math.max(0, Math.min(1, x));
     const t = clamp(rate);
-    // 颜色锚点：浅紫(LGT)、清华紫(THU近似)、深紫(DRK)
-    const LGT = [233, 213, 255]; // #E9D5FF
-    const THU = [114, 47, 138];  // #722F8A（清华紫近似值）
-    const DRK = [76, 29, 149];   // #4C1D95
+    // 颜色锚点：浅蓝(LGT)、中蓝(MID)、深蓝(DRK)
+    const LGT = [219, 234, 254]; // #DBEAFE 浅蓝
+    const MID = [59, 130, 246];  // #3B82F6 中蓝
+    const DRK = [30, 64, 175];   // #1E40AF 深蓝
 
     let r, g, b;
     if (t <= GRADIENT_PIVOT) {
-      const k = smoothstep(0, GRADIENT_PIVOT, t); // 0 -> 1 映射 浅紫 -> 清华紫（平滑）
-      r = Math.round(lerp(LGT[0], THU[0], k));
-      g = Math.round(lerp(LGT[1], THU[1], k));
-      b = Math.round(lerp(LGT[2], THU[2], k));
+      const k = smoothstep(0, GRADIENT_PIVOT, t); // 0 -> 1 映射 浅蓝 -> 中蓝（平滑）
+      r = Math.round(lerp(LGT[0], MID[0], k));
+      g = Math.round(lerp(LGT[1], MID[1], k));
+      b = Math.round(lerp(LGT[2], MID[2], k));
     } else {
-      const k = smoothstep(GRADIENT_PIVOT, 1, t); // 0 -> 1 映射 清华紫 -> 深紫（平滑）
-      r = Math.round(lerp(THU[0], DRK[0], k));
-      g = Math.round(lerp(THU[1], DRK[1], k));
-      b = Math.round(lerp(THU[2], DRK[2], k));
+      const k = smoothstep(GRADIENT_PIVOT, 1, t); // 0 -> 1 映射 中蓝 -> 深蓝（平滑）
+      r = Math.round(lerp(MID[0], DRK[0], k));
+      g = Math.round(lerp(MID[1], DRK[1], k));
+      b = Math.round(lerp(MID[2], DRK[2], k));
     }
     return `rgb(${r}, ${g}, ${b})`;
   };
@@ -97,15 +97,15 @@ const LaunchSiteHeatmap = ({ data }) => {
       const rate = calcSuccessRate(d);
       const color = interpolateColor(rate);
       return (
-        <div className="bg-white p-3 border rounded shadow-lg">
-          <p className="font-semibold flex items-center gap-2">
+        <div className="bg-gray-900/95 backdrop-blur-md p-3 border border-gray-700 rounded-lg shadow-xl">
+          <p className="font-semibold flex items-center gap-2 text-white mb-2">
             <span className="inline-block w-3 h-3 rounded" style={{ background: color }}></span>
             {label}
           </p>
-          <p className="text-blue-600">{`总发射次数: ${d.total}`}</p>
-          <p className="text-green-600">{`成功: ${d.success}`}</p>
-          <p className="text-red-600">{`失败: ${d.failure}`}</p>
-          <p className="text-purple-600">{`成功率: ${(rate * 100).toFixed(1)}%`}</p>
+          <p className="text-gray-300 text-sm">{`总发射次数: ${d.total}`}</p>
+          <p className="text-blue-400 text-sm">{`成功: ${d.success}`}</p>
+          <p className="text-orange-400 text-sm">{`失败: ${d.failure}`}</p>
+          <p className="text-cyan-400 text-sm">{`成功率: ${(rate * 100).toFixed(1)}%`}</p>
         </div>
       );
     }
@@ -115,11 +115,17 @@ const LaunchSiteHeatmap = ({ data }) => {
   return (
     <div className="space-y-6">
       <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold">全球发射场活动热力图</CardTitle>
-          <CardDescription>
-            展示全球各大发射场的历史发射活动，柱子高度表示总次数，颜色连续梯度表示成功率（清华紫渐变）
-          </CardDescription>
+        <CardHeader className="relative overflow-hidden">
+          <div className="absolute inset-0 bg-gray-900/60 backdrop-blur-md opacity-80"></div>
+          <div className="relative z-10">
+            <CardTitle className="text-3xl font-bold bg-gradient-to-r from-cyan-400 via-teal-400 to-blue-400 bg-clip-text text-transparent flex items-center gap-3">
+              <span className="text-2xl">🌍</span>
+              全球发射场活动热力图
+            </CardTitle>
+            <CardDescription className="text-base text-gray-300 mt-2 font-medium">
+              展示全球各大发射场的历史发射活动，柱子高度表示总次数，颜色连续梯度表示成功率
+            </CardDescription>
+          </div>
         </CardHeader>
         <CardContent>
           <div className="mb-4 flex gap-2">
@@ -204,23 +210,50 @@ const LaunchSiteHeatmap = ({ data }) => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="text-center p-3 bg-blue-50 rounded">
-                <div className="text-xl font-bold text-blue-600">{selectedSite.total}</div>
-                <div className="text-sm text-blue-800">总发射次数</div>
-              </div>
-              <div className="text-center p-3 bg-green-50 rounded">
-                <div className="text-xl font-bold text-green-600">{selectedSite.success}</div>
-                <div className="text-sm text-green-800">成功次数</div>
-              </div>
-              <div className="text-center p-3 bg-red-50 rounded">
-                <div className="text-xl font-bold text-red-600">{selectedSite.failure}</div>
-                <div className="text-sm text-red-800">失败次数</div>
-              </div>
-              <div className="text-center p-3 bg-purple-50 rounded">
-                <div className="text-xl font-bold text-purple-600">
-                  {(calcSuccessRate(selectedSite) * 100).toFixed(1)}%
+              <div className="text-center p-3 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg">
+                <div className="text-xl font-bold text-blue-400">
+                  <AnimatedNumber 
+                    value={selectedSite.total} 
+                    formatter={(val) => Math.round(val).toLocaleString()}
+                    duration={500}
+                    delay={100}
+                  />
                 </div>
-                <div className="text-sm text-purple-800">成功率</div>
+                <div className="text-sm text-blue-300">总发射次数</div>
+              </div>
+              <div className="text-center p-3 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg">
+                <div className="text-xl font-bold text-green-400">
+                  <AnimatedNumber 
+                    value={selectedSite.success} 
+                    formatter={(val) => Math.round(val).toLocaleString()}
+                    duration={500}
+                    delay={200}
+                  />
+                </div>
+                <div className="text-sm text-green-300">成功次数</div>
+              </div>
+              <div className="text-center p-3 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg">
+                <div className="text-xl font-bold text-red-400">
+                  <AnimatedNumber 
+                    value={selectedSite.failure} 
+                    formatter={(val) => Math.round(val).toLocaleString()}
+                    duration={500}
+                    delay={300}
+                  />
+                </div>
+                <div className="text-sm text-red-300">失败次数</div>
+              </div>
+              <div className="text-center p-3 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg">
+                <div className="text-xl font-bold text-purple-400">
+                  <AnimatedNumber 
+                    value={(calcSuccessRate(selectedSite) * 100).toFixed(1)} 
+                    suffix="%"
+                    duration={500}
+                    delay={400}
+                    enableCountUp={true}
+                  />
+                </div>
+                <div className="text-sm text-purple-300">成功率</div>
               </div>
             </div>
           </CardContent>

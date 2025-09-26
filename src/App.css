@@ -42,38 +42,42 @@
 }
 
 :root {
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.646 0.222 41.116);
-  --chart-2: oklch(0.6 0.118 184.704);
-  --chart-3: oklch(0.398 0.07 227.392);
-  --chart-4: oklch(0.828 0.189 84.429);
-  --chart-5: oklch(0.769 0.188 70.08);
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: 220 13% 9%;
+  --foreground: 220 9% 95%;
+  --card: oklch(0.15 0.02 240 / 0.75);
+  --card-foreground: 220 9% 95%;
+  --popover: 220 13% 9%;
+  --popover-foreground: 220 9% 95%;
+  --primary: 220 91% 65%;
+  --primary-foreground: 220 9% 5%;
+  --secondary: 220 13% 15%;
+  --secondary-foreground: 220 9% 95%;
+  --muted: 220 13% 15%;
+  --muted-foreground: 220 9% 65%;
+  --accent: 220 13% 15%;
+  --accent-foreground: 220 9% 95%;
+  --destructive: 0 62% 30%;
+  --destructive-foreground: 0 85% 97%;
+  --border: oklch(0.25 0.02 240 / 0.3);
+  --input: 220 13% 15%;
+  --ring: 220 91% 65%;
+  --radius: 0.5rem;
+  
+  /* 深色主题适配的图表颜色 */
+  --chart-1: 217 91% 70%;  /* 蓝色 #60a5fa */
+  --chart-2: 43 96% 56%;   /* 黄色 #fbbf24 */
+  --chart-3: 262 83% 75%;  /* 紫色 #a78bfa */
+  --chart-4: 187 85% 53%;  /* 青色 #22d3ee */
+  --chart-5: 0 84% 70%;    /* 红色 #f87171 */
+  
+  --sidebar: oklch(0.1 0.02 240);
+  --sidebar-foreground: oklch(0.95 0.01 240);
+  --sidebar-primary: oklch(0.7 0.15 240);
+  --sidebar-primary-foreground: oklch(0.05 0.02 240);
+  --sidebar-accent: oklch(0.15 0.02 240);
+  --sidebar-accent-foreground: oklch(0.95 0.01 240);
+  --sidebar-border: oklch(0.25 0.02 240);
+  --sidebar-ring: oklch(0.7 0.15 240);
 }
 
 .dark {
@@ -141,9 +145,30 @@
 
 /* 渐变背景动画 */
 .gradient-bg {
-  background: linear-gradient(-45deg, #1e293b, #1e40af, #3730a3, #581c87);
-  background-size: 400% 400%;
-  animation: gradient-shift 15s ease infinite;
+  background-image: url('/src/assets/spacecraft-background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+}
+
+/* 添加半透明遮罩层以保持文字可读性 */
+.gradient-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+/* 确保内容在遮罩层之上 */
+.gradient-bg > * {
+  position: relative;
+  z-index: 2;
 }
 
 @keyframes gradient-shift {
@@ -171,24 +196,79 @@
   transform: scale(1.05);
 }
 
-/* 图表容器样式 */
+/* 图表容器样式 - 深色主题毛玻璃效果 */
 .chart-container {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(20, 25, 40, 0.7);
+  backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid rgba(100, 120, 180, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
 }
 
-/* 统计卡片样式 */
+.chart-container:hover {
+  background: rgba(25, 30, 50, 0.8);
+  border-color: rgba(120, 140, 200, 0.4);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  transform: translateY(-2px);
+}
+
+/* 统计卡片样式 - 深色主题毛玻璃效果 */
 .stat-card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(15, 20, 35, 0.6);
+  backdrop-filter: blur(10px) saturate(150%);
+  border: 1px solid rgba(80, 100, 160, 0.25);
+  box-shadow: 
+    0 4px 20px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
   transition: all 0.3s ease;
 }
 
 .stat-card:hover {
-  background: rgba(255, 255, 255, 0.15);
-  transform: translateY(-2px);
+  background: rgba(20, 25, 45, 0.75);
+  border-color: rgba(100, 120, 180, 0.35);
+  box-shadow: 
+    0 8px 30px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transform: translateY(-3px);
+}
+
+/* 通用卡片毛玻璃效果 */
+.glassmorphism-card {
+  background: rgba(18, 23, 38, 0.65);
+  backdrop-filter: blur(15px) saturate(200%);
+  border: 1px solid rgba(90, 110, 170, 0.3);
+  border-radius: 16px;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glassmorphism-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+}
+
+.glassmorphism-card:hover {
+  background: rgba(22, 27, 45, 0.8);
+  border-color: rgba(110, 130, 190, 0.4);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.15);
+  transform: translateY(-4px) scale(1.02);
 }
 
 /* 标签页样式优化 */
@@ -252,24 +332,34 @@ html {
   position: sticky;
   top: 0;
   z-index: 30;
-  background: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  background: rgba(10, 15, 30, 0.8);
+  backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid rgba(80, 100, 160, 0.3);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .anchor-link {
   display: inline-block;
   padding: 0.5rem 0.875rem;
-  color: #fff;
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(100, 120, 180, 0.3);
   border-radius: 9999px;
-  background: rgba(255, 255, 255, 0.06);
-  transition: all 0.2s ease;
+  background: rgba(20, 25, 40, 0.6);
+  backdrop-filter: blur(8px);
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.2),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .anchor-link:hover {
   transform: translateY(-1px);
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(25, 30, 50, 0.8);
+  border-color: rgba(120, 140, 200, 0.4);
+  color: rgba(255, 255, 255, 1);
+  box-shadow: 
+    0 4px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.15);
 }
 
 .section-block {
@@ -289,17 +379,217 @@ html {
 
 /* 分区小标题样式 */
 .section-subtitle {
-  margin-bottom: 0.75rem;
-  font-size: 1.25rem;
-  line-height: 1.75rem;
-  font-weight: 700;
+  margin: 2rem auto 1.5rem auto;
+  padding: 1rem 2rem;
+  font-size: 1.75rem;
+  line-height: 2rem;
+  font-weight: 800;
   color: #ffffff;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+  text-align: center;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.15) 0%, rgba(147, 51, 234, 0.15) 50%, rgba(236, 72, 153, 0.15) 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 1rem;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  position: relative;
+  overflow: hidden;
+  max-width: 600px;
+  transition: all 0.3s ease;
+}
+
+.section-subtitle::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.section-subtitle:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.section-subtitle:hover::before {
+  left: 100%;
 }
 
 @media (max-width: 640px) {
   .section-subtitle {
-    font-size: 1.125rem;
-    line-height: 1.5rem;
+    font-size: 1.375rem;
+    line-height: 1.75rem;
+    padding: 0.75rem 1.5rem;
+    margin: 1.5rem auto 1rem auto;
+    max-width: 90%;
   }
+}
+
+/* 数字跳动动画样式 */
+.animated-number {
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.animate-bounce-in {
+  animation: bounceIn 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+@keyframes bounceIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(-20px);
+  }
+  20% {
+    opacity: 0.7;
+    transform: scale(1.1) translateY(-10px);
+  }
+  40% {
+    opacity: 0.9;
+    transform: scale(0.9) translateY(-5px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.05) translateY(-2px);
+  }
+  80% {
+    opacity: 1;
+    transform: scale(0.98) translateY(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0px);
+  }
+}
+
+/* 数字跳动的额外效果 */
+.animated-number.pulse-glow {
+  animation: pulseGlow 2s infinite;
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    text-shadow: 0 0 5px rgba(59, 130, 246, 0.3);
+  }
+  50% {
+    text-shadow: 0 0 20px rgba(59, 130, 246, 0.6), 0 0 30px rgba(59, 130, 246, 0.4);
+  }
+}
+
+/* 悬停时的微动画 */
+.animated-number:hover {
+  transform: scale(1.05);
+  transition: transform 0.2s ease;
+}
+
+/* 深色主题下的文字对比度优化 */
+.chart-container .recharts-text {
+  fill: rgba(255, 255, 255, 0.9) !important;
+}
+
+.chart-container .recharts-cartesian-axis-tick-value {
+  fill: rgba(255, 255, 255, 0.8) !important;
+}
+
+.chart-container .recharts-legend-item-text {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* 图表工具提示优化 */
+.recharts-tooltip-wrapper {
+  background: rgba(15, 20, 35, 0.95) !important;
+  border: 1px solid rgba(100, 120, 180, 0.3) !important;
+  border-radius: 8px !important;
+  backdrop-filter: blur(12px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4) !important;
+}
+
+.recharts-tooltip-label {
+  color: rgba(255, 255, 255, 0.95) !important;
+  font-weight: 600 !important;
+}
+
+.recharts-tooltip-item {
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* 统计卡片文字优化 */
+.stat-card h3 {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.stat-card p {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.stat-card .text-3xl {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 按钮文字对比度优化 */
+.btn-primary {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 标签页文字优化 */
+.tabs-trigger {
+  color: rgba(255, 255, 255, 0.8);
+  transition: all 0.2s ease;
+}
+
+.tabs-trigger[data-state="active"] {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+/* 导航链接文字优化 */
+.anchor-link {
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.anchor-link:hover {
+  color: rgba(255, 255, 255, 1);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+/* 标题文字优化 */
+h1, h2, h3, h4, h5, h6 {
+  color: rgba(255, 255, 255, 0.95);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+/* 普通文字优化 */
+p, span, div {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+/* 强调文字 */
+.text-primary {
+  color: rgba(112, 160, 255, 0.95) !important;
+}
+
+.text-secondary {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.text-muted {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+/* 错误和警告文字 */
+.text-red-400 {
+  color: rgba(248, 113, 113, 0.95) !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.text-blue-200 {
+  color: rgba(191, 219, 254, 0.95) !important;
 }

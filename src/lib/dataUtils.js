@@ -110,5 +110,11 @@ export const getSpaceRaceData = (data) => {
     return acc;
   }, {});
   
-  return Object.values(raceData).sort((a, b) => a.year - b.year);
+  const result = Object.values(raceData).sort((a, b) => a.year - b.year);
+  
+  // 添加调试日志
+  console.log('太空竞赛数据处理结果:', result);
+  console.log('CASC数据样本:', result.filter(item => item.CASC > 0).slice(0, 5));
+  
+  return result;
 };

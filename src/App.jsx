@@ -9,6 +9,8 @@ const SpaceRaceChart = lazy(() => import('./components/SpaceRaceChart'));
 const LaunchSiteHeatmap = lazy(() => import('./components/LaunchSiteHeatmap'));
 import { loadSpaceData, processDataForCharts, getSpaceRaceData } from './lib/dataUtils';
 import './App.css';
+import AnimatedNumber from './components/AnimatedNumber';
+import Navigation from './components/Navigation';
 
 /**
  * useOnScreen
@@ -49,9 +51,9 @@ function ChartSkeleton({ height = 360 }) {
   return (
     <div className="chart-container rounded-lg overflow-hidden">
       <div className="p-6">
-        <div className="h-6 w-40 bg-slate-200 rounded mb-4 animate-pulse" />
-        <div className="h-4 w-64 bg-slate-100 rounded mb-6 animate-pulse" />
-        <div className="w-full rounded bg-slate-100 animate-pulse" style={{ height }} />
+        <div className="h-6 w-40 bg-gray-800/60 backdrop-blur-md rounded mb-4 animate-pulse" />
+        <div className="h-4 w-64 bg-gray-700/60 backdrop-blur-md rounded mb-6 animate-pulse" />
+        <div className="w-full rounded bg-gray-700/60 backdrop-blur-md animate-pulse" style={{ height }} />
       </div>
     </div>
   );
@@ -149,8 +151,11 @@ function App() {
 
   return (
     <div className="min-h-screen gradient-bg">
+      {/* 导航栏 */}
+      <Navigation />
+      
       {/* 头部区域 */}
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden pt-16">
         <div className="absolute inset-0 bg-black/20"></div>
         <div className="relative z-10 container mx-auto px-4 py-16 text-center text-white">
           <div className="flex items-center justify-center mb-6">
@@ -170,22 +175,48 @@ function App() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12 max-w-4xl mx-auto">
             <div className="stat-card rounded-lg p-4">
               <TrendingUp className="w-8 h-8 mx-auto mb-2 text-green-300" />
-              <div className="text-2xl font-bold">{totalMissions.toLocaleString()}</div>
+              <div className="text-2xl font-bold">
+                <AnimatedNumber 
+                  value={totalMissions} 
+                  formatter={(val) => Math.round(val).toLocaleString()}
+                  duration={800}
+                  delay={100}
+                />
+              </div>
               <div className="text-sm text-blue-200">总任务数</div>
             </div>
             <div className="stat-card rounded-lg p-4">
               <Rocket className="w-8 h-8 mx-auto mb-2 text-blue-300" />
-              <div className="text-2xl font-bold">{successfulMissions.toLocaleString()}</div>
+              <div className="text-2xl font-bold">
+                <AnimatedNumber 
+                  value={successfulMissions} 
+                  formatter={(val) => Math.round(val).toLocaleString()}
+                  duration={800}
+                  delay={200}
+                />
+              </div>
               <div className="text-sm text-blue-200">成功任务</div>
             </div>
             <div className="stat-card rounded-lg p-4">
               <Users className="w-8 h-8 mx-auto mb-2 text-purple-300" />
-              <div className="text-2xl font-bold">{uniqueCompanies}</div>
+              <div className="text-2xl font-bold">
+                <AnimatedNumber 
+                  value={uniqueCompanies} 
+                  duration={800}
+                  delay={300}
+                />
+              </div>
               <div className="text-sm text-blue-200">参与机构</div>
             </div>
             <div className="stat-card rounded-lg p-4">
               <Globe className="w-8 h-8 mx-auto mb-2 text-yellow-300" />
-              <div className="text-2xl font-bold">{uniqueLocations}</div>
+              <div className="text-2xl font-bold">
+                <AnimatedNumber 
+                  value={uniqueLocations} 
+                  duration={800}
+                  delay={400}
+                />
+              </div>
               <div className="text-sm text-blue-200">发射地点</div>
             </div>
           </div>
@@ -199,7 +230,7 @@ function App() {
         {/* 概览统计 */}
         <section id="overview" className="section-block">
           {/* 分区小标题：总览统计 */}
-          <h2 className="section-subtitle">总览统计</h2>
+          <h2 className="section-subtitle">一、总览统计</h2>
           <Card className="chart-container card-hover">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -212,21 +243,37 @@ function App() {
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                <div className="text-center p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg card-hover">
-                  <div className="text-3xl font-bold text-blue-600">
-                    {((successfulMissions / totalMissions) * 100).toFixed(1)}%
+                <div className="text-center p-4 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg card-hover">
+                  <div className="text-3xl font-bold text-blue-400">
+                    <AnimatedNumber 
+                      value={((successfulMissions / totalMissions) * 100).toFixed(1)} 
+                      suffix="%"
+                      duration={1000}
+                      delay={500}
+                      enableCountUp={true}
+                    />
                   </div>
-                  <div className="text-sm text-blue-800">总体成功率</div>
+                  <div className="text-sm text-blue-300">总体成功率</div>
                 </div>
-                <div className="text-center p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg card-hover">
-                  <div className="text-3xl font-bold text-green-600">67</div>
-                  <div className="text-sm text-green-800">探索年数</div>
-                </div>
-                <div className="text-center p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg card-hover">
-                  <div className="text-3xl font-bold text-purple-600">
-                    {Math.max(...processedData.yearlyData.map(d => d.total))}
+                <div className="text-center p-4 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg card-hover">
+                  <div className="text-3xl font-bold text-green-400">
+                    <AnimatedNumber 
+                      value={67} 
+                      duration={1000}
+                      delay={600}
+                    />
                   </div>
-                  <div className="text-sm text-purple-800">年度最高发射数</div>
+                  <div className="text-sm text-green-300">探索年数</div>
+                </div>
+                <div className="text-center p-4 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg card-hover">
+                  <div className="text-3xl font-bold text-purple-400">
+                    <AnimatedNumber 
+                      value={Math.max(...processedData.yearlyData.map(d => d.total))} 
+                      duration={1000}
+                      delay={700}
+                    />
+                  </div>
+                  <div className="text-sm text-purple-300">年度最高发射数</div>
                 </div>
               </div>
             </CardContent>
@@ -244,21 +291,21 @@ function App() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                <div className="flex items-center gap-4 p-3 bg-red-50 rounded-lg card-hover">
-                  <Badge variant="secondary" className="bg-red-100 text-red-800">1957</Badge>
-                  <span>苏联发射人类第一颗人造卫星斯普特尼克1号</span>
+                <div className="flex items-center gap-4 p-3 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg card-hover">
+                  <Badge variant="secondary" className="bg-red-900/60 text-red-300 border-red-700/50">1957</Badge>
+                  <span className="text-gray-200">苏联发射人类第一颗人造卫星斯普特尼克1号</span>
                 </div>
-                <div className="flex items-center gap-4 p-3 bg-blue-50 rounded-lg card-hover">
-                  <Badge variant="secondary" className="bg-blue-100 text-blue-800">1969</Badge>
-                  <span>阿波罗11号实现人类首次登月</span>
+                <div className="flex items-center gap-4 p-3 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg card-hover">
+                  <Badge variant="secondary" className="bg-blue-900/60 text-blue-300 border-blue-700/50">1969</Badge>
+                  <span className="text-gray-200">阿波罗11号实现人类首次登月</span>
                 </div>
-                <div className="flex items-center gap-4 p-3 bg-green-50 rounded-lg card-hover">
-                  <Badge variant="secondary" className="bg-green-100 text-green-800">2002</Badge>
-                  <span>SpaceX成立，开启商业航天新时代</span>
+                <div className="flex items-center gap-4 p-3 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg card-hover">
+                  <Badge variant="secondary" className="bg-green-900/60 text-green-300 border-green-700/50">2002</Badge>
+                  <span className="text-gray-200">SpaceX成立，开启商业航天新时代</span>
                 </div>
-                <div className="flex items-center gap-4 p-3 bg-purple-50 rounded-lg card-hover">
-                  <Badge variant="secondary" className="bg-purple-100 text-purple-800">2015</Badge>
-                  <span>SpaceX首次成功回收火箭，实现可重复使用</span>
+                <div className="flex items-center gap-4 p-3 bg-gray-900/60 backdrop-blur-md border border-gray-700/50 rounded-lg card-hover">
+                  <Badge variant="secondary" className="bg-purple-900/60 text-purple-300 border-purple-700/50">2015</Badge>
+                  <span className="text-gray-200">SpaceX首次成功回收火箭，实现可重复使用</span>
                 </div>
               </div>
             </CardContent>
@@ -268,7 +315,7 @@ function App() {
         {/* 交互时间线 */}
         <LazySection id="timeline" minHeight={420}>
           {/* 分区小标题：交互时间线 */}
-          <h2 className="section-subtitle">交互时间线</h2>
+          <h2 className="section-subtitle">二、交互时间线</h2>
           <div className="card-hover">
             <InteractiveTimeline data={spaceData} yearlyData={processedData.yearlyData} />
           </div>
@@ -277,7 +324,7 @@ function App() {
         {/* 太空竞赛 */}
         <LazySection id="race" minHeight={420}>
           {/* 分区小标题：太空竞赛 */}
-          <h2 className="section-subtitle">太空竞赛</h2>
+          <h2 className="section-subtitle">三、太空竞赛</h2>
           <div className="card-hover">
             <SpaceRaceChart data={processedData.spaceRaceData} />
           </div>
@@ -286,7 +333,7 @@ function App() {
         {/* 发射地点 */}
         <LazySection id="locations" minHeight={420}>
           {/* 分区小标题：发射地点 */}
-          <h2 className="section-subtitle">发射地点</h2>
+          <h2 className="section-subtitle">四、发射地点</h2>
           <div className="card-hover">
             <LaunchSiteHeatmap data={processedData.locationData} />
           </div>

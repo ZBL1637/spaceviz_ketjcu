@@ -242,3 +242,64 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* 单页锚点导航与分区样式 */
+html {
+  scroll-behavior: smooth;
+}
+
+.anchor-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.anchor-link {
+  display: inline-block;
+  padding: 0.5rem 0.875rem;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.06);
+  transition: all 0.2s ease;
+}
+
+.anchor-link:hover {
+  transform: translateY(-1px);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.section-block {
+  scroll-margin-top: 84px; /* 与粘性导航高度匹配，避免锚点被遮挡 */
+}
+
+/* 小屏优化导航留白 */
+@media (max-width: 640px) {
+  .anchor-link {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.9rem;
+  }
+  .section-block {
+    scroll-margin-top: 72px;
+  }
+}
+
+/* 分区小标题样式 */
+.section-subtitle {
+  margin-bottom: 0.75rem;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.25);
+}
+
+@media (max-width: 640px) {
+  .section-subtitle {
+    font-size: 1.125rem;
+    line-height: 1.5rem;
+  }
+}

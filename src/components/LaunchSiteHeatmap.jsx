@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+// 移除未使用的 Badge 导入
+// import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
 const LaunchSiteHeatmap = ({ data }) => {
@@ -11,31 +12,104 @@ const LaunchSiteHeatmap = ({ data }) => {
   // 处理发射地点数据
   const siteData = data.slice(0, showTop);
 
+  // 渐变阈值（提高阈值以增强中高成功率区间的对比度）
+  const GRADIENT_PIVOT = 0.65; // 0-1，默认0.5，调高到0.65
+
+  /**
+   * 事件处理：点击柱子切换所选发射场
+   * @param {object} site - 发射场数据项
+   */
   const handleSiteClick = (site) => {
     setSelectedSite(selectedSite?.location === site.location ? null : site);
   };
 
+  /**
+   * 计算成功率（范围 0-1，避免除零）
+   * @param {object} site - 发射场数据项，包含 success 和 total
+   * @returns {number} 0 到 1 之间的成功率
+   */
+  const calcSuccessRate = (site) => {
+    const total = Number(site?.total) || 0;
+    const success = Number(site?.success) || 0;
+    if (!total) return 0;
+    return Math.max(0, Math.min(1, success / total));
+  };
+
+  /**
+   * 线性插值（用于 RGB 分量插值）
+   * @param {number} a 起始值
+   * @param {number} b 终止值
+   * @param {number} t 插值比例 0-1
+   * @returns {number}
+   */
+  const lerp = (a, b, t) => a + (b - a) * t;
+
+  /**
+   * 平滑插值函数（smoothstep），让颜色过渡更顺滑
+   * 公式：t*t*(3-2*t)，并对输入进行0-1归一化
+   * @param {number} edge0 左边界（0-1）
+   * @param {number} edge1 右边界（0-1）
+   * @param {number} x 当前值（0-1）
+   * @returns {number} 平滑后的插值因子（0-1）
+   */
+  const smoothstep = (edge0, edge1, x) => {
+    const t = Math.max(0, Math.min(1, (x - edge0) / (edge1 - edge0)));
+    return t * t * (3 - 2 * t);
+  };
+
+  /**
+   * 将成功率映射为连续颜色：清华紫渐变（浅紫 -> 清华紫 -> 深紫）
+   * 设计原则：
+   * - 提高阈值（GRADIENT_PIVOT=0.65）以在中高区间获得更好的对比度
+   * - 使用 smoothstep 增强过渡平滑度，避免生硬的线性分界
+   * @param {number} rate - 0 到 1 的成功率
+   * @returns {string} CSS rgb(r,g,b) 颜色
+   */
+  const interpolateColor = (rate) => {
+    const clamp = (x) => Math.max(0, Math.min(1, x));
+    const t = clamp(rate);
+    // 颜色锚点：浅紫(LGT)、清华紫(THU近似)、深紫(DRK)
+    const LGT = [233, 213, 255]; // #E9D5FF
+    const THU = [114, 47, 138];  // #722F8A（清华紫近似值）
+    const DRK = [76, 29, 149];   // #4C1D95
+
+    let r, g, b;
+    if (t <= GRADIENT_PIVOT) {
+      const k = smoothstep(0, GRADIENT_PIVOT, t); // 0 -> 1 映射 浅紫 -> 清华紫（平滑）
+      r = Math.round(lerp(LGT[0], THU[0], k));
+      g = Math.round(lerp(LGT[1], THU[1], k));
+      b = Math.round(lerp(LGT[2], THU[2], k));
+    } else {
+      const k = smoothstep(GRADIENT_PIVOT, 1, t); // 0 -> 1 映射 清华紫 -> 深紫（平滑）
+      r = Math.round(lerp(THU[0], DRK[0], k));
+      g = Math.round(lerp(THU[1], DRK[1], k));
+      b = Math.round(lerp(THU[2], DRK[2], k));
+    }
+    return `rgb(${r}, ${g}, ${b})`;
+  };
+
+  /**
+   * 自定义提示框：展示总次数、成功/失败、成功率与对应颜色
+   */
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
-      const data = payload[0].payload;
+      const d = payload[0].payload;
+      const rate = calcSuccessRate(d);
+      const color = interpolateColor(rate);
       return (
         <div className="bg-white p-3 border rounded shadow-lg">
-          <p className="font-semibold">{label}</p>
-          <p className="text-blue-600">{`总发射次数: ${data.total}`}</p>
-          <p className="text-green-600">{`成功: ${data.success}`}</p>
-          <p className="text-red-600">{`失败: ${data.failure}`}</p>
-          <p className="text-purple-600">{`成功率: ${((data.success / data.total) * 100).toFixed(1)}%`}</p>
+          <p className="font-semibold flex items-center gap-2">
+            <span className="inline-block w-3 h-3 rounded" style={{ background: color }}></span>
+            {label}
+          </p>
+          <p className="text-blue-600">{`总发射次数: ${d.total}`}</p>
+          <p className="text-green-600">{`成功: ${d.success}`}</p>
+          <p className="text-red-600">{`失败: ${d.failure}`}</p>
+          <p className="text-purple-600">{`成功率: ${(rate * 100).toFixed(1)}%`}</p>
         </div>
       );
     }
     return null;
-  };
-
-  const getBarColor = (successRate) => {
-    if (successRate >= 90) return '#22c55e';
-    if (successRate >= 80) return '#eab308';
-    if (successRate >= 70) return '#f97316';
-    return '#ef4444';
   };
 
   return (
@@ -44,7 +118,7 @@ const LaunchSiteHeatmap = ({ data }) => {
         <CardHeader>
           <CardTitle className="text-2xl font-bold">全球发射场活动热力图</CardTitle>
           <CardDescription>
-            展示全球各大发射场的历史发射活动，颜色深浅表示成功率高低
+            展示全球各大发射场的历史发射活动，柱子高度表示总次数，颜色连续梯度表示成功率（清华紫渐变）
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -64,7 +138,7 @@ const LaunchSiteHeatmap = ({ data }) => {
               前20名
             </Button>
             <Button 
-              variant={showTop === siteData.length ? "default" : "outline"}
+              variant={showTop === data.length ? "default" : "outline"}
               size="sm"
               onClick={() => setShowTop(data.length)}
             >
@@ -92,28 +166,33 @@ const LaunchSiteHeatmap = ({ data }) => {
               />
               <YAxis tick={{ fontSize: 12 }} />
               <Tooltip content={<CustomTooltip />} />
+              {/* 使用 Cell 为每根柱子应用对应成功率的颜色（清华紫渐变） */}
               <Bar 
-                dataKey="total" 
-                fill={(entry) => getBarColor((entry.success / entry.total) * 100)}
+                dataKey="total"
                 onClick={handleSiteClick}
                 cursor="pointer"
-              />
+              >
+                {siteData.map((entry, index) => {
+                  const rate = calcSuccessRate(entry);
+                  return (
+                    <Cell key={`cell-${index}`} fill={interpolateColor(rate)} />
+                  );
+                })}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
 
-          <div className="mt-4 flex flex-wrap gap-2">
-            <Badge variant="secondary" className="bg-green-100 text-green-800">
-              ■ 90%+ 成功率
-            </Badge>
-            <Badge variant="secondary" className="bg-yellow-100 text-yellow-800">
-              ■ 80-90% 成功率
-            </Badge>
-            <Badge variant="secondary" className="bg-orange-100 text-orange-800">
-              ■ 70-80% 成功率
-            </Badge>
-            <Badge variant="secondary" className="bg-red-100 text-red-800">
-              ■ &lt;70% 成功率
-            </Badge>
+          {/* 连续渐变图例：0% -> 100% 成功率（清华紫渐变） */}
+          <div className="mt-4">
+            <div className="text-sm text-gray-700 mb-2">颜色代表成功率</div>
+            <div className="flex items-center gap-2">
+              <span className="text-xs">0%</span>
+              <div
+                className="h-3 flex-1 rounded"
+                style={{ background: `linear-gradient(90deg, #E9D5FF 0%, #722F8A ${Math.round(GRADIENT_PIVOT*100)}%, #4C1D95 100%)` }}
+              />
+              <span className="text-xs">100%</span>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -139,7 +218,7 @@ const LaunchSiteHeatmap = ({ data }) => {
               </div>
               <div className="text-center p-3 bg-purple-50 rounded">
                 <div className="text-xl font-bold text-purple-600">
-                  {((selectedSite.success / selectedSite.total) * 100).toFixed(1)}%
+                  {(calcSuccessRate(selectedSite) * 100).toFixed(1)}%
                 </div>
                 <div className="text-sm text-purple-800">成功率</div>
               </div>

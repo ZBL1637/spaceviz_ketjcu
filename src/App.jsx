@@ -11,6 +11,7 @@ import { loadSpaceData, processDataForCharts, getSpaceRaceData } from './lib/dat
 import './App.css';
 import AnimatedNumber from './components/AnimatedNumber';
 import Navigation from './components/Navigation';
+import ChinaSpaceExploration from './components/ChinaSpaceExploration';
 
 /**
  * useOnScreen
@@ -336,6 +337,15 @@ function App() {
           <h2 className="section-subtitle">四、发射地点</h2>
           <div className="card-hover">
             <LaunchSiteHeatmap data={processedData.locationData} />
+          </div>
+        </LazySection>
+
+        {/* 中国太空探索模块 */}
+        <LazySection id="china-space" minHeight={420}>
+          {/* 分区小标题：中国太空探索 */}
+          <h2 className="section-subtitle">五、中国太空探索</h2>
+          <div className="card-hover">
+            <ChinaSpaceExploration />
           </div>
         </LazySection>
       </div>

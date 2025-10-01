@@ -45,6 +45,12 @@ function Navigation() {
       label: '发射地点',
       icon: MapPin,
       description: '全球发射基地分布'
+    },
+    {
+      id: 'china-space',
+      label: '中国太空',
+      icon: Rocket,
+      description: '中国太空探索发展'
     }
   ];
 

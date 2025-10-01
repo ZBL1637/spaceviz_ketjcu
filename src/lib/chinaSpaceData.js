@@ -6,6 +6,7 @@
 // 中国太空探索关键里程碑
 export const chinaMilestones = [
   {
+    id: 1,
     year: 1970,
     date: '1970-04-24',
     mission: '东方红一号',
@@ -16,6 +17,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 2,
     year: 1975,
     date: '1975-11-26',
     mission: '返回式卫星一号',
@@ -26,6 +28,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 3,
     year: 2003,
     date: '2003-10-15',
     mission: '神舟五号',
@@ -36,6 +39,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 4,
     year: 2007,
     date: '2007-10-24',
     mission: '嫦娥一号',
@@ -46,6 +50,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 5,
     year: 2008,
     date: '2008-09-25',
     mission: '神舟七号',
@@ -56,6 +61,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 6,
     year: 2011,
     date: '2011-09-29',
     mission: '天宫一号',
@@ -66,6 +72,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 7,
     year: 2013,
     date: '2013-12-14',
     mission: '嫦娥三号',
@@ -76,6 +83,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 8,
     year: 2016,
     date: '2016-09-15',
     mission: '天宫二号',
@@ -86,6 +94,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 9,
     year: 2019,
     date: '2019-01-03',
     mission: '嫦娥四号',
@@ -96,6 +105,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 10,
     year: 2020,
     date: '2020-07-23',
     mission: '天问一号',
@@ -106,6 +116,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 11,
     year: 2020,
     date: '2020-12-17',
     mission: '嫦娥五号',
@@ -116,6 +127,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 12,
     year: 2021,
     date: '2021-04-29',
     mission: '天和核心舱',
@@ -126,6 +138,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 13,
     year: 2021,
     date: '2021-05-15',
     mission: '祝融号火星车',
@@ -136,6 +149,7 @@ export const chinaMilestones = [
     status: 'success'
   },
   {
+    id: 14,
     year: 2022,
     date: '2022-12-31',
     mission: '中国空间站建成',

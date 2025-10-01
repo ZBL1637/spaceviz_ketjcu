@@ -98,6 +98,17 @@ const ChinaSpaceExploration = () => {
     const recentMissions = chinaMilestones.filter(m => m.year >= 2012).length;
     const successRate = 95.8; // 模拟数据
 
+    // 调试日志 - 使用更明显的标识
+    console.log('🚀🚀🚀 中国太空探索统计数据调试 🚀🚀🚀');
+    console.log('chinaMilestones数组:', chinaMilestones);
+    console.log('chinaMilestones长度:', chinaMilestones.length);
+    console.log('totalMissions:', totalMissions);
+    console.log('recentMissions:', recentMissions);
+    console.log('currentYear:', currentYear);
+    console.log('探索历程年数:', currentYear - 1970);
+    console.log('successRate:', successRate);
+    console.log('🚀🚀🚀 中国太空探索调试结束 🚀🚀🚀');
+
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
         <Card className="bg-gradient-to-br from-blue-600/20 to-purple-600/20 backdrop-blur-md border-blue-500/30">
@@ -197,7 +208,10 @@ const ChinaSpaceExploration = () => {
         </div>
 
         {/* 统计概览 */}
-        {renderOverviewStats()}
+        <div className="mb-8">
+          <h3 className="text-xl font-bold text-white mb-4 text-center">统计概览</h3>
+          {renderOverviewStats()}
+        </div>
 
         {/* 思想性内容 */}
         {renderPhilosophicalContent()}

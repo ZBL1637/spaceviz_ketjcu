@@ -20,10 +20,13 @@ const AnimatedNumber = ({
   suffix = '',
   formatter = null
 }) => {
-  const [displayValue, setDisplayValue] = useState(enableCountUp ? 0 : value);
+  const [displayValue, setDisplayValue] = useState(enableCountUp ? (suffix ? '0' + suffix : 0) : value);
   const [isVisible, setIsVisible] = useState(false);
   const elementRef = useRef(null);
   const animationRef = useRef(null);
+
+  // 调试日志
+  console.log('🔢 AnimatedNumber 初始化:', { value, suffix, enableCountUp, duration, displayValue });
 
   // 数字递增动画函数
   const animateCountUp = (start, end, duration) => {
@@ -64,19 +67,38 @@ const AnimatedNumber = ({
   // Intersection Observer 用于检测元素是否进入视口
   useEffect(() => {
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !isVisible) {
-          setIsVisible(true);
+      (entries) => {
+        entries.forEach((entry) => {
+          // 增强调试日志
+          console.log('📊📊📊 AnimatedNumber Intersection Observer 📊📊📊');
+          console.log('entry.isIntersecting:', entry.isIntersecting);
+          console.log('isVisible:', isVisible);
+          console.log('value:', value);
+          console.log('target element:', entry.target);
+          console.log('boundingClientRect:', entry.boundingClientRect);
           
-          // 延迟启动动画
-          setTimeout(() => {
-            if (enableCountUp) {
-              animateCountUp(0, value, duration);
-            } else {
-              setDisplayValue(formatter ? formatter(value) : value + suffix);
-            }
-          }, delay);
-        }
+          if (entry.isIntersecting && !isVisible) {
+            console.log('🎯 开始动画，目标值:', value);
+            setIsVisible(true);
+            
+            // 延迟启动动画
+            setTimeout(() => {
+              if (enableCountUp) {
+                console.log('启动数字递增动画:', { from: 0, to: value, duration });
+                animateCountUp(0, value, duration);
+              } else {
+                const finalValue = formatter ? formatter(value) : value + suffix;
+                console.log('直接设置显示值:', finalValue);
+                setDisplayValue(finalValue);
+              }
+            }, delay);
+          } else if (entry.isIntersecting && isVisible) {
+            console.log('🎯 直接设置显示值:', value);
+            const finalValue = formatter ? formatter(value) : value + suffix;
+            setDisplayValue(finalValue);
+          }
+          console.log('📊📊📊 AnimatedNumber 调试结束 📊📊📊');
+        });
       },
       { threshold: 0.1 }
     );
@@ -97,11 +119,15 @@ const AnimatedNumber = ({
 
   // 当value改变时重新触发动画
   useEffect(() => {
+    console.log('🔄 AnimatedNumber value变化:', { value, isVisible, enableCountUp });
     if (isVisible && enableCountUp) {
       const currentNumeric = parseFloat(String(displayValue).replace(/[^0-9.-]/g, '')) || 0;
+      console.log('🔄 重新启动动画:', { from: currentNumeric, to: value });
       animateCountUp(currentNumeric, value, duration * 0.5); // 更新时动画时间减半
     } else if (isVisible) {
-      setDisplayValue(formatter ? formatter(value) : value + suffix);
+      const finalValue = formatter ? formatter(value) : value + suffix;
+      console.log('🔄 直接更新显示值:', finalValue);
+      setDisplayValue(finalValue);
     }
   }, [value]);
 

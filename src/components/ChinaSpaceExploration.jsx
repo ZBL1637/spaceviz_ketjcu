@@ -5,20 +5,11 @@ import { Button } from './ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
 import { 
   chinaMilestones, 
-  satelliteLaunchComparison, 
-  mannedMissionComparison,
-  navigationSystemComparison,
-  beidouApplications,
-  newEraMissions,
-  internationalCooperations,
-  futureMissions
+  beidouApplications
 } from '../lib/chinaSpaceData';
 import { Rocket, Satellite, Globe, Star, TrendingUp, Users, Calendar, MapPin } from 'lucide-react';
 import AnimatedNumber from './AnimatedNumber';
-import DynamicBarChart from './DynamicBarChart';
-import NavigationRadarChart from './NavigationRadarChart';
 import BeidouInteractiveMap from './BeidouInteractiveMap';
-import NewEraAcceleration from './NewEraAcceleration';
 import HumanMachineModule from './HumanMachineModule';
 
 /**
@@ -218,41 +209,17 @@ const ChinaSpaceExploration = () => {
 
         {/* 主要内容标签页 */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4 bg-gray-800/50 backdrop-blur-md">
+          <TabsList className="grid w-full grid-cols-2 bg-gray-800/50 backdrop-blur-md">
             <TabsTrigger value="overview" className="text-white data-[state=active]:bg-blue-600">
               发展历程
             </TabsTrigger>
-            <TabsTrigger value="comparison" className="text-white data-[state=active]:bg-blue-600">
-              国际对比
-            </TabsTrigger>
             <TabsTrigger value="beidou" className="text-white data-[state=active]:bg-blue-600">
               北斗专题
-            </TabsTrigger>
-            <TabsTrigger value="newera" className="text-white data-[state=active]:bg-blue-600">
-              新时代加速
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="overview" className="mt-8">
             {renderMilestoneTimeline()}
-          </TabsContent>
-
-          <TabsContent value="comparison" className="mt-8">
-            <div className="space-y-8">
-              <div className="text-center text-white mb-8">
-                <h3 className="text-2xl font-bold mb-4">国际对比分析</h3>
-                <p className="text-gray-300 max-w-3xl mx-auto">
-                  通过动态数据可视化，深入了解中美俄三国在太空探索领域的实力对比，
-                  以及北斗导航系统与GPS、GLONASS的功能特性比较。
-                </p>
-              </div>
-              
-              {/* 动态条形图 */}
-              <DynamicBarChart />
-              
-              {/* 雷达图对比 */}
-              <NavigationRadarChart />
-            </div>
           </TabsContent>
 
           <TabsContent value="beidou" className="mt-8">
@@ -264,12 +231,6 @@ const ChinaSpaceExploration = () => {
                 </p>
               </div>
               <BeidouInteractiveMap />
-            </div>
-          </TabsContent>
-
-          <TabsContent value="newera" className="mt-8">
-            <div className="space-y-6">
-              <NewEraAcceleration />
             </div>
           </TabsContent>
         </Tabs>

@@ -3,11 +3,11 @@
 import * as React from "react"
 import * as SliderPrimitive from "@radix-ui/react-slider"
 
-import { cn } from "@/lib/utils"
+import { cn } from "../../lib/utils"
 
 /**
  * 滑块组件 - 深色主题适配
- * @param {Object} props - 组件属性
+ * @param {Object} props - 组件属�?
  * @returns {JSX.Element} 滑块组件
  */
 function Slider({
